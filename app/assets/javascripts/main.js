@@ -12,12 +12,12 @@ var mainState = {
     game.stage.backgroundColor = '#1ddded';
 
     //image assets
-    game.load.image('bird', 'assets/bird.png'); 
-    game.load.image('pipe', 'assets/pipe.png');
+    game.load.image('bird', '/images/bird.png'); 
+    game.load.image('pipe', '/images/pipe.png');
 
     //sounds assets
-    game.load.audio('jump', 'assets/jump.wav');
-    game.load.audio('die', 'assets/die.wav');
+    game.load.audio('jump', '/sounds/jump.wav');
+    game.load.audio('die', '/sounds/die.wav');
   },
 
   create: function() { 
@@ -56,6 +56,7 @@ var mainState = {
     // It contains the game's logic   
 
     if (this.bird.inWorld == false) {
+      this.dieSound.play();
       this.restartGame();
     }
 
