@@ -1,7 +1,6 @@
 var gameWidth = window.innerWidth * window.devicePixelRatio,
-    gameHeight = window.innerHeight * window.devicePixelRatio;
-
-var game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'gameDiv');
+    gameHeight = window.innerHeight * window.devicePixelRatio,
+    game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'gameDiv');
 
 var mainState = {
 
@@ -21,10 +20,12 @@ var mainState = {
     // Here we set up the game, display sprites, etc.  
 
     var birdX = Math.floor(gameWidth/3) - 100,
-        birdY = Math.floor(gameHeight/2) - 100;
+        birdY = Math.floor(gameHeight/2) - 100,
+        spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
     this.bird = this.game.add.sprite(birdX, birdY, 'bird');
+    this.bird.anchor.setTo(-0.2, 0.5);
 
     game.physics.arcade.enable(this.bird);
     //reenable this
@@ -34,7 +35,6 @@ var mainState = {
     this.pipes.enableBody = true;  // Add physics to the group  
     this.pipes.createMultiple(20, 'pipe'); // Create 20 pipes 
 
-    var spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     spaceKey.onDown.add(this.jump, this);
 
     this.score = 0;
@@ -51,7 +51,11 @@ var mainState = {
       this.restartGame();
     }
 
-    game.physics.arcade.overlap(this.bird, this.pipes, this.restartGame, null, this);  
+    game.physics.arcade.overlap(this.bird, this.pipes, this.restartGame, null, this); 
+
+    if (this.bird.angle < 20) {
+      this.bird.angle += 1; 
+    }
 
   },
 
@@ -66,6 +70,7 @@ var mainState = {
     }
 
     this.bird.body.velocity.y = -350;
+    game.add.tween(this.bird).to({angle: -20}, 100).start();
 
   },
 
@@ -93,11 +98,8 @@ var mainState = {
   },
 
   addColumnOfPipes: function() {  
-    var numberOfBlocks = Math.floor(gameHeight / 70);
-    console.log(numberOfBlocks);
-
-    // Pick where the hole will be
-    var hole = Math.floor(Math.random() * (numberOfBlocks-1)) + 1;
+    var numberOfBlocks = Math.floor(gameHeight / 70),
+        hole = Math.floor(Math.random() * (numberOfBlocks-1)) + 1;
 
     for (var i = 0; i < (numberOfBlocks+1); i++) {
       if (i != hole && i != hole + 1) {
