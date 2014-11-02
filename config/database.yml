@@ -23,4 +23,4 @@ test:
 
 production:
   <<: *default
-  database: flappy_prod
+  database: flappy_dev
