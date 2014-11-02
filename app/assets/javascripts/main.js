@@ -8,11 +8,16 @@ var mainState = {
     // This function will be executed at the beginning     
     // That's where we load the game's assets  
 
+    //background assets
     game.stage.backgroundColor = '#1ddded';
 
+    //image assets
     game.load.image('bird', 'assets/bird.png'); 
     game.load.image('pipe', 'assets/pipe.png');
 
+    //sounds assets
+    game.load.audio('jump', 'assets/jump.wav');
+    game.load.audio('die', 'assets/die.wav');
   },
 
   create: function() { 
@@ -41,6 +46,9 @@ var mainState = {
     this.firstPipe = true;
     this.labelScore = game.add.text(10, 10, "0", { font: "24px Helvetica", fill: "#ffffff" });  
 
+    this.jumpSound = game.add.audio('jump');
+    this.dieSound = game.add.audio('die');
+
   },
 
   update: function() {
@@ -51,11 +59,31 @@ var mainState = {
       this.restartGame();
     }
 
-    game.physics.arcade.overlap(this.bird, this.pipes, this.restartGame, null, this); 
+    game.physics.arcade.overlap(this.bird, this.pipes, this.hitPipe, null, this); 
 
     if (this.bird.angle < 20) {
       this.bird.angle += 1; 
     }
+
+  },
+
+  hitPipe: function(){
+
+    if (this.bird.alive == false) {
+      return;
+    }
+
+    // Set the alive property of the bird to false
+    this.bird.alive = false;
+    this.dieSound.play();
+
+    // Prevent new pipes from appearing
+    game.time.events.remove(this.timer);
+
+    // Go through all the pipes, and stop their movement
+    this.pipes.forEachAlive(function(p){
+      p.body.velocity.x = 0;
+    }, this);
 
   },
 
@@ -69,8 +97,11 @@ var mainState = {
       this.timer = game.time.events.loop(pipeTimeout, this.addColumnOfPipes, this); 
     }
 
-    this.bird.body.velocity.y = -350;
-    game.add.tween(this.bird).to({angle: -20}, 100).start();
+    if ( this.bird.alive ) {
+      this.bird.body.velocity.y = -350;
+      game.add.tween(this.bird).to({angle: -20}, 100).start();
+      this.jumpSound.play();
+    }
 
   },
 
