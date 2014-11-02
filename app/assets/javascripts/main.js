@@ -49,6 +49,8 @@ var mainState = {
     this.jumpSound = game.add.audio('jump');
     this.dieSound = game.add.audio('die');
 
+    this.isHit = false;
+
   },
 
   update: function() {
@@ -56,7 +58,9 @@ var mainState = {
     // It contains the game's logic   
 
     if (this.bird.inWorld == false) {
-      this.dieSound.play();
+      if ( !this.isHit ) {
+        this.dieSound.play();
+      }
       this.restartGame();
     }
 
@@ -77,6 +81,7 @@ var mainState = {
     // Set the alive property of the bird to false
     this.bird.alive = false;
     this.dieSound.play();
+    this.isHit = true;
 
     // Prevent new pipes from appearing
     game.time.events.remove(this.timer);
