@@ -1,5 +1,5 @@
-var gameWidth = window.innerWidth;
-var gameHeight = window.innerHeight;
+var gameWidth = window.innerWidth * window.devicePixelRatio,
+    gameHeight = window.innerHeight * window.devicePixelRatio;
 
 var game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'gameDiv');
 
